@@ -204,8 +204,8 @@ class _UserHomePageState extends State<UserHomePage> {
                                       .withOpacity(0.15),
                                   shape: BoxShape.circle,
                                 ),
-                                child: Icon(Icons.description_outlined,
-                                    color: theme.colorScheme.primary, size: 28),
+                                child: Icon(Icons.campaign_outlined,
+                                color: theme.colorScheme.primary, size: 28),
                               ),
                               const SizedBox(width: 16),
 

@@ -22,24 +22,31 @@ class _InfluencerProfilePageState extends State<InfluencerProfilePage> {
   }
 
   Future<void> _fetchInfluencerProfile() async {
-    final user = FirebaseAuth.instance.currentUser;
-    if (user != null) {
-      final doc = await FirebaseFirestore.instance
-          .collection('influencers')
-          .doc(user.uid)
-          .get();
-      setState(() {
-        _name = doc['name'] ?? 'No name';
-        _email = user.email ?? 'No email';
-        _platformName = doc['platform_name'] ?? 'Not specified';
-        _createdAt = user.metadata.creationTime
-                ?.toLocal()
-                .toString()
-                .split('.')[0] ??
-            'Unknown';
-      });
-    }
+  final user = FirebaseAuth.instance.currentUser;
+  if (user != null) {
+    final doc = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(user.uid)
+        .get();
+
+    if (!doc.exists || !mounted) return;
+
+    final data = doc.data();
+    if (data == null) return;
+
+    setState(() {
+      _name = data['name'] ?? 'No name';
+      _email = user.email ?? 'No email';
+      _platformName = data['platformName'] ?? 'Not specified';
+      _createdAt = user.metadata.creationTime
+              ?.toLocal()
+              .toString()
+              .split('.')[0] ??
+          'Unknown';
+    });
   }
+}
+
 
   @override
   Widget build(BuildContext context) {

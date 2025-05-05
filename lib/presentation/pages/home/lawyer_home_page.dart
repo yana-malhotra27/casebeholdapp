@@ -141,7 +141,7 @@ class _LawyerHomePageState extends State<LawyerHomePage> {
                               color: theme.colorScheme.primary.withOpacity(0.15),
                               shape: BoxShape.circle,
                             ),
-                            child: Icon(Icons.description_outlined,
+                            child: Icon(Icons.campaign_outlined,
                                 color: theme.colorScheme.primary, size: 28),
                           ),
                           const SizedBox(width: 16),
