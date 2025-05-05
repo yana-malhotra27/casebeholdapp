@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "334621754331",
+    "project_id": "casebehold",
+    "storage_bucket": "casebehold.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:334621754331:android:2d1abe38d5ca056965ddfe",
+        "android_client_info": {
+          "package_name": "com.example.casebehold"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBNJrx2YBAd9EiS4terCTc3t8pwqv2hJ9U"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
