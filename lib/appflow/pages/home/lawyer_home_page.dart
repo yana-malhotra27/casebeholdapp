@@ -1,4 +1,4 @@
-import 'package:casebehold/appflow/pages/details/bid_details_page.dart';
+import 'package:casebehold/appflow/pages/details/lawyer_details_page.dart';
 import 'package:casebehold/appflow/pages/profiles/lawyer_profilepage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -131,7 +131,7 @@ class _LawyerHomePageState extends State<LawyerHomePage> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (_) => BidDetailsPage(
+        builder: (_) => LawyerDetailsPage(
           caseData: caseData,
         ),
       ),

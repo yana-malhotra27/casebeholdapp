@@ -1,4 +1,4 @@
-import 'package:casebehold/appflow/pages/details/bid_details_page.dart';
+import 'package:casebehold/appflow/pages/details/influencer_bid_details_page.dart';
 import 'package:casebehold/appflow/pages/profiles/influencer_profilepage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -50,10 +50,10 @@ class _InfluencerHomePageState extends State<InfluencerHomePage> {
 
   Widget _buildCaseList() {
     final theme = Theme.of(context);
-    final caseQuery = FirebaseFirestore.instance.collection('cases').orderBy('timestamp', descending: true);
-    final filteredStream = _selectedCategory == 'All'
-        ? caseQuery.snapshots()
-        : caseQuery.where('category', isEqualTo: _selectedCategory).snapshots();
+    final baseQuery = FirebaseFirestore.instance.collection('cases').orderBy('timestamp', descending: true);
+    final caseStream = _selectedCategory == 'All'
+        ? baseQuery.snapshots()
+        : baseQuery.where('category', isEqualTo: _selectedCategory).snapshots();
 
     return Column(
       children: [
@@ -70,9 +70,7 @@ class _InfluencerHomePageState extends State<InfluencerHomePage> {
                 borderSide: BorderSide(color: theme.colorScheme.onPrimary),
                 borderRadius: BorderRadius.circular(12),
               ),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
+              border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
             ),
             dropdownColor: theme.colorScheme.primary,
             iconEnabledColor: theme.colorScheme.onPrimary,
@@ -84,16 +82,12 @@ class _InfluencerHomePageState extends State<InfluencerHomePage> {
               DropdownMenuItem(value: 'Harassment', child: Text('Harassment')),
               DropdownMenuItem(value: 'Property', child: Text('Property')),
             ],
-            onChanged: (value) {
-              setState(() {
-                _selectedCategory = value!;
-              });
-            },
+            onChanged: (value) => setState(() => _selectedCategory = value!),
           ),
         ),
         Expanded(
           child: StreamBuilder<QuerySnapshot>(
-            stream: filteredStream,
+            stream: caseStream,
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return const Center(child: CircularProgressIndicator());
@@ -103,14 +97,10 @@ class _InfluencerHomePageState extends State<InfluencerHomePage> {
               if (docs.isEmpty) {
                 return const Center(
                   child: Padding(
-                    padding: EdgeInsets.all(24.0),
+                    padding: EdgeInsets.all(24),
                     child: Text(
                       "No cases available.",
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.w500,
-                        color: Colors.grey,
-                      ),
+                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500, color: Colors.grey),
                       textAlign: TextAlign.center,
                     ),
                   ),
@@ -122,22 +112,19 @@ class _InfluencerHomePageState extends State<InfluencerHomePage> {
                 itemCount: docs.length,
                 itemBuilder: (context, index) {
                   final doc = docs[index];
-                  final caseData = doc.data() as Map<String, dynamic>;
+                  final caseData = {
+                    ...doc.data() as Map<String, dynamic>,
+                    'caseId': doc.id,
+                  };
 
                   return GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => BidDetailsPage(caseData: caseData),
-                        ),
-                      );
-                    },
+                    onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => InfluencerBidDetailsPage(caseData: caseData)),
+                    ),
                     child: Card(
                       elevation: 4,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(24),
-                      ),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
                       color: theme.colorScheme.surfaceVariant,
                       child: Padding(
                         padding: const EdgeInsets.all(16),
@@ -150,11 +137,7 @@ class _InfluencerHomePageState extends State<InfluencerHomePage> {
                                 color: theme.colorScheme.primary.withOpacity(0.15),
                                 shape: BoxShape.circle,
                               ),
-                              child: Icon(
-                                Icons.campaign_outlined,
-                                color: theme.colorScheme.primary,
-                                size: 28,
-                              ),
+                              child: Icon(Icons.campaign_outlined, color: theme.colorScheme.primary, size: 28),
                             ),
                             const SizedBox(width: 16),
                             Expanded(
@@ -163,9 +146,7 @@ class _InfluencerHomePageState extends State<InfluencerHomePage> {
                                 children: [
                                   Text(
                                     caseData['title'] ?? 'Untitled',
-                                    style: theme.textTheme.titleMedium?.copyWith(
-                                      fontWeight: FontWeight.w600,
-                                    ),
+                                    style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600),
                                   ),
                                   const SizedBox(height: 6),
                                   Text(
@@ -179,8 +160,7 @@ class _InfluencerHomePageState extends State<InfluencerHomePage> {
                                 ],
                               ),
                             ),
-                            const Icon(Icons.arrow_forward_ios_rounded,
-                                size: 18, color: Colors.grey),
+                            const Icon(Icons.arrow_forward_ios_rounded, size: 18, color: Colors.grey),
                           ],
                         ),
                       ),
@@ -196,14 +176,9 @@ class _InfluencerHomePageState extends State<InfluencerHomePage> {
   }
 
   Widget _buildBody() {
-    switch (_selectedIndex) {
-      case 0:
-        return _buildCaseList();
-      case 1:
-        return const Center(child: Text("Collaborated cases will be shown here"));
-      default:
-        return const SizedBox();
-    }
+    return _selectedIndex == 0
+        ? _buildCaseList()
+        : const Center(child: Text("Collaborated cases will be shown here"));
   }
 
   @override

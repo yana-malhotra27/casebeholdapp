@@ -1,10 +1,10 @@
-import 'package:casebehold/appflow/pages/bids/bids_statuspage.dart';
 import 'package:flutter/material.dart';
+import '../forms/bid_form/influencer_bidformpage.dart';
 
-class CaseDetailsPage extends StatelessWidget {
+class InfluencerBidDetailsPage extends StatelessWidget {
   final Map<String, dynamic> caseData;
 
-  const CaseDetailsPage({super.key, required this.caseData});
+  const InfluencerBidDetailsPage({super.key, required this.caseData});
 
   @override
   Widget build(BuildContext context) {
@@ -13,6 +13,7 @@ class CaseDetailsPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(caseData['title'] ?? 'Case Details'),
+        leading: const BackButton(),
         backgroundColor: theme.colorScheme.primary,
         foregroundColor: theme.colorScheme.onPrimary,
       ),
@@ -45,35 +46,18 @@ class CaseDetailsPage extends StatelessWidget {
             const SizedBox(height: 30),
             SizedBox(
               width: double.infinity,
-              child: ElevatedButton.icon(
+              child: FilledButton(
                 onPressed: () {
-                  final caseId = caseData['id'];
-                  final userId = caseData['userId']; // Get the userId here
-                  if (caseId != null && userId != null) {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) => BidsStatusPage(
-                          caseType: caseData['category'], // Pass category as caseType
-                          userId: userId, // Pass userId
-                        ),
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => InfluencerBidFormPage(
+                        caseId: caseData['caseId'] ?? '',
                       ),
-                    );
-                  } else {
-                    // Handle the case where the ID is missing, perhaps show a message
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('Case ID or User ID is missing!')),
-                    );
-                  }
+                    ),
+                  );
                 },
-                icon: const Icon(Icons.gavel),
-                label: const Text('Check Bids'),
-                style: ElevatedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(vertical: 14),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                ),
+                child: const Text("Bid as Influencer"),
               ),
             ),
           ],
@@ -93,8 +77,10 @@ class CaseDetailsPage extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(title,
-                  style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
+              Text(
+                title,
+                style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+              ),
               const SizedBox(height: 6),
               SelectableText(
                 value?.trim().isEmpty == true ? 'Not provided' : value ?? 'Not available',
@@ -107,3 +93,4 @@ class CaseDetailsPage extends StatelessWidget {
     );
   }
 }
+

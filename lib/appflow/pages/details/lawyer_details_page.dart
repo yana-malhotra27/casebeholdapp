@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import '../forms/bid_form/bidformpage.dart';
+import '../forms/bid_form/lawyer_bidformpage.dart';
 
-class BidDetailsPage extends StatelessWidget {
+class LawyerDetailsPage extends StatelessWidget {
   final Map<String, dynamic> caseData;
 
-  const BidDetailsPage({super.key, required this.caseData});
+  const LawyerDetailsPage({super.key, required this.caseData});
 
   @override
   Widget build(BuildContext context) {
@@ -48,17 +48,16 @@ class BidDetailsPage extends StatelessWidget {
               width: double.infinity,
               child: FilledButton(
                 onPressed: () {
-                  // Pass only caseId to BidFormPage
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (_) => BidFormPage(
-                        caseId: caseData['caseId'] ?? '', // Pass only caseId
+                      builder: (_) => LawyerBidFormPage(
+                        caseId: caseData['caseId'] ?? '',
                       ),
                     ),
                   );
                 },
-                child: const Text("Bid on this Case"),
+                child: const Text("Bid as Lawyer"),
               ),
             ),
           ],

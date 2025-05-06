@@ -1,35 +1,35 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
-class BidFormPage extends StatefulWidget {
+class LawyerBidFormPage extends StatefulWidget {
   final String caseId;
 
-  const BidFormPage({
+  const LawyerBidFormPage({
     super.key,
     required this.caseId,
   });
 
   @override
-  State<BidFormPage> createState() => _BidFormPageState();
+  State<LawyerBidFormPage> createState() => _LawyerBidFormPageState();
 }
 
-class _BidFormPageState extends State<BidFormPage> {
+class _LawyerBidFormPageState extends State<LawyerBidFormPage> {
   final _formKey = GlobalKey<FormState>();
 
   final _nameController = TextEditingController();
-  final _platformNameController = TextEditingController();
-  final _linkController = TextEditingController();
-  final _amountController = TextEditingController();
-  final _messageController = TextEditingController();
+  final _licenseController = TextEditingController();
+  final _experienceController = TextEditingController();
+  final _feeController = TextEditingController();
+  final _strategyController = TextEditingController();
   final _extraDetailsController = TextEditingController();
 
   @override
   void dispose() {
     _nameController.dispose();
-    _platformNameController.dispose();
-    _linkController.dispose();
-    _amountController.dispose();
-    _messageController.dispose();
+    _licenseController.dispose();
+    _experienceController.dispose();
+    _feeController.dispose();
+    _strategyController.dispose();
     _extraDetailsController.dispose();
     super.dispose();
   }
@@ -38,14 +38,15 @@ class _BidFormPageState extends State<BidFormPage> {
     if (!_formKey.currentState!.validate()) return;
 
     final bidData = {
+      'type': 'lawyer',
       'name': _nameController.text.trim(),
-      'platformName': _platformNameController.text.trim(),
-      'link': _linkController.text.trim(),
-      'amount': _amountController.text.trim(),
-      'message': _messageController.text.trim(),
+      'licenseNumber': _licenseController.text.trim(),
+      'experience': _experienceController.text.trim(),
+      'expectedFee': _feeController.text.trim(),
+      'strategy': _strategyController.text.trim(),
       'extraDetails': _extraDetailsController.text.trim(),
       'createdAt': FieldValue.serverTimestamp(),
-      'caseId': widget.caseId,  // Use caseId from the constructor
+      'caseId': widget.caseId,
     };
 
     try {
@@ -84,9 +85,6 @@ class _BidFormPageState extends State<BidFormPage> {
         if (required && (value == null || value.trim().isEmpty)) {
           return '$label is required';
         }
-        if (label == 'Bidding Amount or Share' && double.tryParse(value!) == null) {
-          return 'Enter a valid number';
-        }
         return null;
       },
     );
@@ -98,7 +96,7 @@ class _BidFormPageState extends State<BidFormPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Place Your Bid'),
+        title: const Text('Lawyer Bid Form'),
         leading: const BackButton(),
         backgroundColor: theme.colorScheme.primary,
         foregroundColor: theme.colorScheme.onPrimary,
@@ -111,22 +109,27 @@ class _BidFormPageState extends State<BidFormPage> {
             children: [
               _buildTextField(label: 'Your Name', icon: Icons.person, controller: _nameController),
               const SizedBox(height: 16),
-              _buildTextField(label: 'Platform Name', icon: Icons.web, controller: _platformNameController),
-              const SizedBox(height: 16),
-              _buildTextField(label: 'Platform/Profile Link', icon: Icons.link, controller: _linkController),
+              _buildTextField(label: 'License Number', icon: Icons.gavel, controller: _licenseController),
               const SizedBox(height: 16),
               _buildTextField(
-                label: 'Bidding Amount or Share',
-                icon: Icons.attach_money,
-                controller: _amountController,
+                label: 'Years of Experience',
+                icon: Icons.timelapse,
+                controller: _experienceController,
                 keyboardType: TextInputType.number,
               ),
               const SizedBox(height: 16),
               _buildTextField(
-                label: 'Message to Case Poster',
-                icon: Icons.message,
-                controller: _messageController,
-                maxLines: 5,
+                label: 'Expected Fee',
+                icon: Icons.money,
+                controller: _feeController,
+                keyboardType: TextInputType.number,
+              ),
+              const SizedBox(height: 16),
+              _buildTextField(
+                label: 'Proposed Strategy',
+                icon: Icons.description,
+                controller: _strategyController,
+                maxLines: 4,
               ),
               const SizedBox(height: 16),
               _buildTextField(
