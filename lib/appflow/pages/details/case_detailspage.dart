@@ -49,7 +49,7 @@ class CaseDetailsPage extends StatelessWidget {
                 onPressed: () {
                   final caseId = caseData['id'];
                   final userId = caseData['userId']; // Get the userId here
-                  if (caseId != null && userId != null) {
+                  if (caseId != null || userId != null) {
                     Navigator.push(
                       context,
                       MaterialPageRoute(

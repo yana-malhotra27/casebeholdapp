@@ -52,7 +52,7 @@ class InfluencerBidDetailsPage extends StatelessWidget {
                     context,
                     MaterialPageRoute(
                       builder: (_) => InfluencerBidFormPage(
-                        caseId: caseData['caseId'] ?? '',
+                        caseId: caseData['userId'] ?? '',
                       ),
                     ),
                   );

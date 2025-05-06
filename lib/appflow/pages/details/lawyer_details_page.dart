@@ -52,7 +52,7 @@ class LawyerDetailsPage extends StatelessWidget {
                     context,
                     MaterialPageRoute(
                       builder: (_) => LawyerBidFormPage(
-                        caseId: caseData['caseId'] ?? '',
+                        caseId: caseData['userId'] ?? '',
                       ),
                     ),
                   );
