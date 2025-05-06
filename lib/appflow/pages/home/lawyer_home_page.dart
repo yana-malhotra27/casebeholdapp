@@ -1,16 +1,17 @@
-import 'package:casebehold/presentation/pages/profiles/influencer_profilepage.dart';
+import 'package:casebehold/appflow/pages/details/bid_details_page.dart';
+import 'package:casebehold/appflow/pages/profiles/lawyer_profilepage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-class InfluencerHomePage extends StatefulWidget {
-  const InfluencerHomePage({super.key});
+class LawyerHomePage extends StatefulWidget {
+  const LawyerHomePage({super.key});
 
   @override
-  State<InfluencerHomePage> createState() => _InfluencerHomePageState();
+  State<LawyerHomePage> createState() => _LawyerHomePageState();
 }
 
-class _InfluencerHomePageState extends State<InfluencerHomePage> {
+class _LawyerHomePageState extends State<LawyerHomePage> {
   int _selectedIndex = 0;
   String? _username;
   String _selectedCategory = 'All';
@@ -26,7 +27,7 @@ class _InfluencerHomePageState extends State<InfluencerHomePage> {
     final doc =
         await FirebaseFirestore.instance.collection('users').doc(uid).get();
     setState(() {
-      _username = doc['name'] ?? 'Influencer';
+      _username = doc['name'] ?? 'Lawyer';
     });
   }
 
@@ -44,12 +45,13 @@ class _InfluencerHomePageState extends State<InfluencerHomePage> {
   void _openProfile() {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (_) => const InfluencerProfilePage()),
+      MaterialPageRoute(builder: (_) => const LawyerProfilePage()),
     );
   }
 
   Widget _buildCaseList() {
     final theme = Theme.of(context);
+    // Query Firestore with dynamic filtering by category
     final caseQuery = FirebaseFirestore.instance.collection('cases').orderBy('timestamp', descending: true);
 
     final filteredStream = _selectedCategory == 'All'
@@ -124,55 +126,66 @@ class _InfluencerHomePageState extends State<InfluencerHomePage> {
                   final doc = docs[index];
                   final caseData = doc.data() as Map<String, dynamic>;
 
-                  return Card(
-                    elevation: 4,
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(24)),
-                    color: theme.colorScheme.surfaceVariant,
-                    child: Padding(
-                      padding: const EdgeInsets.all(16),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Container(
-                            padding: const EdgeInsets.all(10),
-                            decoration: BoxDecoration(
-                              color: theme.colorScheme.primary.withOpacity(0.15),
-                              shape: BoxShape.circle,
-                            ),
-                            child: Icon(Icons.campaign_outlined,
-                                color: theme.colorScheme.primary, size: 28),
-                          ),
-                          const SizedBox(width: 16),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  caseData['title'] ?? 'Untitled',
-                                  style: theme.textTheme.titleMedium?.copyWith(
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                                const SizedBox(height: 6),
-                                Text(
-                                  caseData['summary'] ?? '',
-                                  maxLines: 2,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: theme.textTheme.bodyMedium?.copyWith(
-                                    color:
-                                        theme.colorScheme.onSurfaceVariant,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          const Icon(Icons.arrow_forward_ios_rounded,
-                              size: 18, color: Colors.grey),
-                        ],
-                      ),
-                    ),
-                  );
+                  return GestureDetector(
+  onTap: () {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => BidDetailsPage(
+          caseData: caseData,
+        ),
+      ),
+    );
+  },
+  child: Card(
+    elevation: 4,
+    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+    color: theme.colorScheme.surfaceVariant,
+    child: Padding(
+      padding: const EdgeInsets.all(16),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: theme.colorScheme.primary.withOpacity(0.15),
+              shape: BoxShape.circle,
+            ),
+            child: Icon(Icons.campaign_outlined,
+                color: theme.colorScheme.primary, size: 28),
+          ),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  caseData['title'] ?? 'Untitled',
+                  style: theme.textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                const SizedBox(height: 6),
+                Text(
+                  caseData['summary'] ?? '',
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    color: theme.colorScheme.onSurfaceVariant,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const Icon(Icons.arrow_forward_ios_rounded,
+              size: 18, color: Colors.grey),
+        ],
+      ),
+    ),
+  ),
+);
+
                 },
               );
             },
@@ -239,7 +252,7 @@ class _InfluencerHomePageState extends State<InfluencerHomePage> {
           onDestinationSelected: _onTabTapped,
           destinations: const [
             NavigationDestination(icon: Icon(Icons.home), label: 'Home'),
-            NavigationDestination(icon: Icon(Icons.check), label: 'Accepted Cases'),
+            NavigationDestination(icon: Icon(Icons.check), label: 'Accepted Bids'),
           ],
         ),
       ),

@@ -1,9 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:casebehold/presentation/pages/home/user_home_page.dart';
-import 'package:casebehold/presentation/pages/home/lawyer_home_page.dart';
-import 'package:casebehold/presentation/pages/home/influencer_home_page.dart';
+import 'package:casebehold/appflow/pages/home/user_home_page.dart';
+import 'package:casebehold/appflow/pages/home/lawyer_home_page.dart';
+import 'package:casebehold/appflow/pages/home/influencer_home_page.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});

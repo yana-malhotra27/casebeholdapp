@@ -1,7 +1,7 @@
-import 'package:casebehold/presentation/pages/home/case_detailspage.dart';
-import 'package:casebehold/presentation/pages/profiles/user_profilepage.dart';
-import 'package:casebehold/presentation/pages/workshops/discussion_page.dart';
-import 'package:casebehold/presentation/pages/workshops/workshop_page.dart';
+import 'package:casebehold/appflow/pages/details/case_detailspage.dart';
+import 'package:casebehold/appflow/pages/profiles/user_profilepage.dart';
+import 'package:casebehold/appflow/pages/workshops/discussion_page.dart';
+import 'package:casebehold/appflow/pages/workshops/workshop_page.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';

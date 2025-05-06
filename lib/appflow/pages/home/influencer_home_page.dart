@@ -1,16 +1,17 @@
-import 'package:casebehold/presentation/pages/profiles/lawyer_profilepage.dart';
+import 'package:casebehold/appflow/pages/details/bid_details_page.dart';
+import 'package:casebehold/appflow/pages/profiles/influencer_profilepage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-class LawyerHomePage extends StatefulWidget {
-  const LawyerHomePage({super.key});
+class InfluencerHomePage extends StatefulWidget {
+  const InfluencerHomePage({super.key});
 
   @override
-  State<LawyerHomePage> createState() => _LawyerHomePageState();
+  State<InfluencerHomePage> createState() => _InfluencerHomePageState();
 }
 
-class _LawyerHomePageState extends State<LawyerHomePage> {
+class _InfluencerHomePageState extends State<InfluencerHomePage> {
   int _selectedIndex = 0;
   String? _username;
   String _selectedCategory = 'All';
@@ -23,10 +24,9 @@ class _LawyerHomePageState extends State<LawyerHomePage> {
 
   Future<void> _loadUserInfo() async {
     final uid = FirebaseAuth.instance.currentUser!.uid;
-    final doc =
-        await FirebaseFirestore.instance.collection('users').doc(uid).get();
+    final doc = await FirebaseFirestore.instance.collection('users').doc(uid).get();
     setState(() {
-      _username = doc['name'] ?? 'Lawyer';
+      _username = doc['name'] ?? 'Influencer';
     });
   }
 
@@ -44,15 +44,13 @@ class _LawyerHomePageState extends State<LawyerHomePage> {
   void _openProfile() {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (_) => const LawyerProfilePage()),
+      MaterialPageRoute(builder: (_) => const InfluencerProfilePage()),
     );
   }
 
   Widget _buildCaseList() {
     final theme = Theme.of(context);
-    // Query Firestore with dynamic filtering by category
     final caseQuery = FirebaseFirestore.instance.collection('cases').orderBy('timestamp', descending: true);
-
     final filteredStream = _selectedCategory == 'All'
         ? caseQuery.snapshots()
         : caseQuery.where('category', isEqualTo: _selectedCategory).snapshots();
@@ -109,9 +107,10 @@ class _LawyerHomePageState extends State<LawyerHomePage> {
                     child: Text(
                       "No cases available.",
                       style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.w500,
-                          color: Colors.grey),
+                        fontSize: 20,
+                        fontWeight: FontWeight.w500,
+                        color: Colors.grey,
+                      ),
                       textAlign: TextAlign.center,
                     ),
                   ),
@@ -125,52 +124,65 @@ class _LawyerHomePageState extends State<LawyerHomePage> {
                   final doc = docs[index];
                   final caseData = doc.data() as Map<String, dynamic>;
 
-                  return Card(
-                    elevation: 4,
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(24)),
-                    color: theme.colorScheme.surfaceVariant,
-                    child: Padding(
-                      padding: const EdgeInsets.all(16),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Container(
-                            padding: const EdgeInsets.all(10),
-                            decoration: BoxDecoration(
-                              color: theme.colorScheme.primary.withOpacity(0.15),
-                              shape: BoxShape.circle,
+                  return GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => BidDetailsPage(caseData: caseData),
+                        ),
+                      );
+                    },
+                    child: Card(
+                      elevation: 4,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(24),
+                      ),
+                      color: theme.colorScheme.surfaceVariant,
+                      child: Padding(
+                        padding: const EdgeInsets.all(16),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.all(10),
+                              decoration: BoxDecoration(
+                                color: theme.colorScheme.primary.withOpacity(0.15),
+                                shape: BoxShape.circle,
+                              ),
+                              child: Icon(
+                                Icons.campaign_outlined,
+                                color: theme.colorScheme.primary,
+                                size: 28,
+                              ),
                             ),
-                            child: Icon(Icons.campaign_outlined,
-                                color: theme.colorScheme.primary, size: 28),
-                          ),
-                          const SizedBox(width: 16),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  caseData['title'] ?? 'Untitled',
-                                  style: theme.textTheme.titleMedium?.copyWith(
-                                    fontWeight: FontWeight.w600,
+                            const SizedBox(width: 16),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    caseData['title'] ?? 'Untitled',
+                                    style: theme.textTheme.titleMedium?.copyWith(
+                                      fontWeight: FontWeight.w600,
+                                    ),
                                   ),
-                                ),
-                                const SizedBox(height: 6),
-                                Text(
-                                  caseData['summary'] ?? '',
-                                  maxLines: 2,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: theme.textTheme.bodyMedium?.copyWith(
-                                    color:
-                                        theme.colorScheme.onSurfaceVariant,
+                                  const SizedBox(height: 6),
+                                  Text(
+                                    caseData['summary'] ?? '',
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: theme.textTheme.bodyMedium?.copyWith(
+                                      color: theme.colorScheme.onSurfaceVariant,
+                                    ),
                                   ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
-                          ),
-                          const Icon(Icons.arrow_forward_ios_rounded,
-                              size: 18, color: Colors.grey),
-                        ],
+                            const Icon(Icons.arrow_forward_ios_rounded,
+                                size: 18, color: Colors.grey),
+                          ],
+                        ),
                       ),
                     ),
                   );
@@ -188,7 +200,7 @@ class _LawyerHomePageState extends State<LawyerHomePage> {
       case 0:
         return _buildCaseList();
       case 1:
-        return const Center(child: Text("Accepted bids will be shown here"));
+        return const Center(child: Text("Collaborated cases will be shown here"));
       default:
         return const SizedBox();
     }
@@ -216,8 +228,7 @@ class _LawyerHomePageState extends State<LawyerHomePage> {
         centerTitle: true,
         actions: [
           IconButton(
-            icon:
-                Icon(Icons.person_outline, color: theme.colorScheme.onPrimary),
+            icon: Icon(Icons.person_outline, color: theme.colorScheme.onPrimary),
             onPressed: _openProfile,
           ),
         ],
