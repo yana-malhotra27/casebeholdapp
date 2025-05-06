@@ -45,11 +45,11 @@ class _UserHomePageState extends State<UserHomePage> {
   }
 
   void _openUserProfile() {
-  Navigator.push(
-    context,
-    MaterialPageRoute(builder: (_) => const UserProfilePage()),
-  );
-}
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (_) => const UserProfilePage()),
+    );
+  }
 
   void _openPostCaseForm() {
     Navigator.pushNamed(context, '/post-case');
@@ -205,7 +205,7 @@ class _UserHomePageState extends State<UserHomePage> {
                                   shape: BoxShape.circle,
                                 ),
                                 child: Icon(Icons.campaign_outlined,
-                                color: theme.colorScheme.primary, size: 28),
+                                    color: theme.colorScheme.primary, size: 28),
                               ),
                               const SizedBox(width: 16),
 
@@ -286,6 +286,16 @@ class _UserHomePageState extends State<UserHomePage> {
         ),
         centerTitle: true,
         actions: [
+          IconButton(
+            icon: Icon(Icons.chat_bubble_outline,
+                color: theme.colorScheme.onPrimary),
+            onPressed: () {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Chatbot feature coming soon!')),
+              );
+            },
+            tooltip: 'Chatbot',
+          ),
           IconButton(
             icon:
                 Icon(Icons.person_outline, color: theme.colorScheme.onPrimary),

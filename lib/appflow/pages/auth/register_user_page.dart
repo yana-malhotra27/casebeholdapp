@@ -23,18 +23,14 @@ class _RegisterUserPageState extends State<RegisterUserPage> {
   Future<void> _registerUser() async {
     if (!_formKey.currentState!.validate()) return;
 
-    // Show CAPTCHA dialog before proceeding
-    bool captchaPassed = await showDialog<bool>(
+    final captchaPassed = await showDialog<bool>(
           context: context,
           barrierDismissible: false,
           builder: (_) => const CaptchaDialog(),
         ) ??
         false;
 
-    if (!captchaPassed) {
-      // User closed dialog or didn't pass CAPTCHA
-      return;
-    }
+    if (!captchaPassed) return;
 
     setState(() {
       _isLoading = true;
@@ -42,14 +38,12 @@ class _RegisterUserPageState extends State<RegisterUserPage> {
     });
 
     try {
-      // Create user with Firebase Auth
-      final userCredential =
-          await FirebaseAuth.instance.createUserWithEmailAndPassword(
+      final userCredential = await FirebaseAuth.instance
+          .createUserWithEmailAndPassword(
         email: _emailController.text.trim(),
         password: _passwordController.text.trim(),
       );
 
-      // Store extra user info in Firestore
       await FirebaseFirestore.instance
           .collection('users')
           .doc(userCredential.user!.uid)
@@ -70,12 +64,10 @@ class _RegisterUserPageState extends State<RegisterUserPage> {
       }
     } on FirebaseAuthException catch (e) {
       setState(() => _error = e.message);
-    } catch (e) {
+    } catch (_) {
       setState(() => _error = "Something went wrong. Try again.");
     } finally {
-      if (mounted) {
-        setState(() => _isLoading = false);
-      }
+      setState(() => _isLoading = false);
     }
   }
 
@@ -88,64 +80,109 @@ class _RegisterUserPageState extends State<RegisterUserPage> {
     super.dispose();
   }
 
+  InputDecoration _inputDecoration(String label, IconData icon) {
+    return InputDecoration(
+      labelText: label,
+      prefixIcon: Icon(icon),
+      border: OutlineInputBorder(borderRadius: BorderRadius.circular(16)),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Scaffold(
       appBar: AppBar(title: const Text("Register as User")),
-      body: Padding(
-        padding: const EdgeInsets.all(24.0),
-        child: Form(
-          key: _formKey,
-          child: ListView(
-            children: [
-              TextFormField(
-                controller: _nameController,
-                decoration: const InputDecoration(labelText: "Full Name"),
-                validator: (value) =>
-                    value!.isEmpty ? "Name cannot be empty" : null,
-              ),
-              const SizedBox(height: 12),
-              TextFormField(
-                controller: _emailController,
-                decoration: const InputDecoration(labelText: "Email"),
-                validator: (value) =>
-                    value!.contains('@') ? null : "Enter a valid email",
-              ),
-              const SizedBox(height: 12),
-              TextFormField(
-                controller: _passwordController,
-                decoration: const InputDecoration(labelText: "Password"),
-                obscureText: true,
-                validator: (value) => value!.length < 6
-                    ? "Password must be at least 6 characters"
-                    : null,
-              ),
-              const SizedBox(height: 12),
-              TextFormField(
-                controller: _caseInterestController,
-                decoration:
-                    const InputDecoration(labelText: "Type of Case / Interest"),
-                validator: (value) =>
-                    value!.isEmpty ? "Please enter your case interest" : null,
-              ),
-              const SizedBox(height: 24),
-              if (_error != null)
-                Text(
-                  _error!,
-                  style: const TextStyle(color: Colors.red, fontSize: 14),
-                ),
-              const SizedBox(height: 12),
-              _isLoading
-                  ? const Center(child: CircularProgressIndicator())
-                  : ElevatedButton(
-                      onPressed: _registerUser,
-                      child: const Text("Register"),
+      body: Center(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(24),
+          child: Card(
+            elevation: 4,
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+            child: Padding(
+              padding: const EdgeInsets.all(24),
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  children: [
+                    const Text(
+                      "Create Your Account",
+                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                     ),
-            ],
+                    const SizedBox(height: 16),
+                    TextFormField(
+                      controller: _nameController,
+                      decoration: _inputDecoration("Full Name", Icons.person),
+                      validator: (value) =>
+                          value!.isEmpty ? "Name cannot be empty" : null,
+                    ),
+                    const SizedBox(height: 12),
+                    TextFormField(
+                      controller: _emailController,
+                      decoration: _inputDecoration("Email", Icons.email),
+                      keyboardType: TextInputType.emailAddress,
+                      validator: (value) =>
+                          value!.contains('@') ? null : "Enter a valid email",
+                    ),
+                    const SizedBox(height: 12),
+                    TextFormField(
+                      controller: _passwordController,
+                      decoration: _inputDecoration("Password", Icons.lock),
+                      obscureText: true,
+                      validator: (value) => value!.length < 6
+                          ? "Password must be at least 6 characters"
+                          : null,
+                    ),
+                    const SizedBox(height: 12),
+                    TextFormField(
+                      controller: _caseInterestController,
+                      decoration:
+                          _inputDecoration("Type of Case / Interest", Icons.business),
+                      validator: (value) =>
+                          value!.isEmpty ? "Please enter your case interest" : null,
+                    ),
+                    const SizedBox(height: 20),
+                    AnimatedCrossFade(
+                      duration: const Duration(milliseconds: 300),
+                      crossFadeState: _error != null
+                          ? CrossFadeState.showFirst
+                          : CrossFadeState.showSecond,
+                      firstChild: Text(
+                        _error ?? '',
+                        style: const TextStyle(
+                          color: Colors.red,
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                      secondChild: const SizedBox.shrink(),
+                    ),
+                    const SizedBox(height: 16),
+                    _isLoading
+                        ? const CircularProgressIndicator()
+                        : SizedBox(
+                            width: double.infinity,
+                            child: FilledButton.icon(
+                              onPressed: _registerUser,
+                              icon: const Icon(Icons.person_add),
+                              label: const Text("Register"),
+                              style: FilledButton.styleFrom(
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 16),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(16),
+                                ),
+                              ),
+                            ),
+                          ),
+                  ],
+                ),
+              ),
+            ),
           ),
         ),
       ),
     );
   }
 }
-

@@ -24,7 +24,8 @@ class _InfluencerHomePageState extends State<InfluencerHomePage> {
 
   Future<void> _loadUserInfo() async {
     final uid = FirebaseAuth.instance.currentUser!.uid;
-    final doc = await FirebaseFirestore.instance.collection('users').doc(uid).get();
+    final doc =
+        await FirebaseFirestore.instance.collection('users').doc(uid).get();
     setState(() {
       _username = doc['name'] ?? 'Influencer';
     });
@@ -50,7 +51,9 @@ class _InfluencerHomePageState extends State<InfluencerHomePage> {
 
   Widget _buildCaseList() {
     final theme = Theme.of(context);
-    final baseQuery = FirebaseFirestore.instance.collection('cases').orderBy('timestamp', descending: true);
+    final baseQuery = FirebaseFirestore.instance
+        .collection('cases')
+        .orderBy('timestamp', descending: true);
     final caseStream = _selectedCategory == 'All'
         ? baseQuery.snapshots()
         : baseQuery.where('category', isEqualTo: _selectedCategory).snapshots();
@@ -70,7 +73,8 @@ class _InfluencerHomePageState extends State<InfluencerHomePage> {
                 borderSide: BorderSide(color: theme.colorScheme.onPrimary),
                 borderRadius: BorderRadius.circular(12),
               ),
-              border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+              border:
+                  OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
             ),
             dropdownColor: theme.colorScheme.primary,
             iconEnabledColor: theme.colorScheme.onPrimary,
@@ -100,7 +104,10 @@ class _InfluencerHomePageState extends State<InfluencerHomePage> {
                     padding: EdgeInsets.all(24),
                     child: Text(
                       "No cases available.",
-                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500, color: Colors.grey),
+                      style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.grey),
                       textAlign: TextAlign.center,
                     ),
                   ),
@@ -120,11 +127,14 @@ class _InfluencerHomePageState extends State<InfluencerHomePage> {
                   return GestureDetector(
                     onTap: () => Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (_) => InfluencerBidDetailsPage(caseData: caseData)),
+                      MaterialPageRoute(
+                          builder: (_) =>
+                              InfluencerBidDetailsPage(caseData: caseData)),
                     ),
                     child: Card(
                       elevation: 4,
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(24)),
                       color: theme.colorScheme.surfaceVariant,
                       child: Padding(
                         padding: const EdgeInsets.all(16),
@@ -134,10 +144,12 @@ class _InfluencerHomePageState extends State<InfluencerHomePage> {
                             Container(
                               padding: const EdgeInsets.all(10),
                               decoration: BoxDecoration(
-                                color: theme.colorScheme.primary.withOpacity(0.15),
+                                color:
+                                    theme.colorScheme.primary.withOpacity(0.15),
                                 shape: BoxShape.circle,
                               ),
-                              child: Icon(Icons.campaign_outlined, color: theme.colorScheme.primary, size: 28),
+                              child: Icon(Icons.campaign_outlined,
+                                  color: theme.colorScheme.primary, size: 28),
                             ),
                             const SizedBox(width: 16),
                             Expanded(
@@ -146,7 +158,8 @@ class _InfluencerHomePageState extends State<InfluencerHomePage> {
                                 children: [
                                   Text(
                                     caseData['title'] ?? 'Untitled',
-                                    style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600),
+                                    style: theme.textTheme.titleMedium
+                                        ?.copyWith(fontWeight: FontWeight.w600),
                                   ),
                                   const SizedBox(height: 6),
                                   Text(
@@ -160,7 +173,8 @@ class _InfluencerHomePageState extends State<InfluencerHomePage> {
                                 ],
                               ),
                             ),
-                            const Icon(Icons.arrow_forward_ios_rounded, size: 18, color: Colors.grey),
+                            const Icon(Icons.arrow_forward_ios_rounded,
+                                size: 18, color: Colors.grey),
                           ],
                         ),
                       ),
@@ -203,7 +217,18 @@ class _InfluencerHomePageState extends State<InfluencerHomePage> {
         centerTitle: true,
         actions: [
           IconButton(
-            icon: Icon(Icons.person_outline, color: theme.colorScheme.onPrimary),
+            icon: Icon(Icons.chat_bubble_outline,
+                color: theme.colorScheme.onPrimary),
+            onPressed: () {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Chatbot feature coming soon!')),
+              );
+            },
+            tooltip: 'Chatbot',
+          ),
+          IconButton(
+            icon:
+                Icon(Icons.person_outline, color: theme.colorScheme.onPrimary),
             onPressed: _openProfile,
           ),
         ],
@@ -226,7 +251,8 @@ class _InfluencerHomePageState extends State<InfluencerHomePage> {
           onDestinationSelected: _onTabTapped,
           destinations: const [
             NavigationDestination(icon: Icon(Icons.home), label: 'Home'),
-            NavigationDestination(icon: Icon(Icons.check), label: 'Accepted Bids'),
+            NavigationDestination(
+                icon: Icon(Icons.check), label: 'Accepted Bids'),
           ],
         ),
       ),

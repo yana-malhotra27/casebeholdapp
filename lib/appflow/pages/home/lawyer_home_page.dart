@@ -52,7 +52,9 @@ class _LawyerHomePageState extends State<LawyerHomePage> {
   Widget _buildCaseList() {
     final theme = Theme.of(context);
     // Query Firestore with dynamic filtering by category
-    final caseQuery = FirebaseFirestore.instance.collection('cases').orderBy('timestamp', descending: true);
+    final caseQuery = FirebaseFirestore.instance
+        .collection('cases')
+        .orderBy('timestamp', descending: true);
 
     final filteredStream = _selectedCategory == 'All'
         ? caseQuery.snapshots()
@@ -127,65 +129,67 @@ class _LawyerHomePageState extends State<LawyerHomePage> {
                   final caseData = doc.data() as Map<String, dynamic>;
 
                   return GestureDetector(
-  onTap: () {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (_) => LawyerDetailsPage(
-          caseData: caseData,
-        ),
-      ),
-    );
-  },
-  child: Card(
-    elevation: 4,
-    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-    color: theme.colorScheme.surfaceVariant,
-    child: Padding(
-      padding: const EdgeInsets.all(16),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            padding: const EdgeInsets.all(10),
-            decoration: BoxDecoration(
-              color: theme.colorScheme.primary.withOpacity(0.15),
-              shape: BoxShape.circle,
-            ),
-            child: Icon(Icons.campaign_outlined,
-                color: theme.colorScheme.primary, size: 28),
-          ),
-          const SizedBox(width: 16),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  caseData['title'] ?? 'Untitled',
-                  style: theme.textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                const SizedBox(height: 6),
-                Text(
-                  caseData['summary'] ?? '',
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                  style: theme.textTheme.bodyMedium?.copyWith(
-                    color: theme.colorScheme.onSurfaceVariant,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          const Icon(Icons.arrow_forward_ios_rounded,
-              size: 18, color: Colors.grey),
-        ],
-      ),
-    ),
-  ),
-);
-
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => LawyerDetailsPage(
+                            caseData: caseData,
+                          ),
+                        ),
+                      );
+                    },
+                    child: Card(
+                      elevation: 4,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(24)),
+                      color: theme.colorScheme.surfaceVariant,
+                      child: Padding(
+                        padding: const EdgeInsets.all(16),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.all(10),
+                              decoration: BoxDecoration(
+                                color:
+                                    theme.colorScheme.primary.withOpacity(0.15),
+                                shape: BoxShape.circle,
+                              ),
+                              child: Icon(Icons.campaign_outlined,
+                                  color: theme.colorScheme.primary, size: 28),
+                            ),
+                            const SizedBox(width: 16),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    caseData['title'] ?? 'Untitled',
+                                    style:
+                                        theme.textTheme.titleMedium?.copyWith(
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 6),
+                                  Text(
+                                    caseData['summary'] ?? '',
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: theme.textTheme.bodyMedium?.copyWith(
+                                      color: theme.colorScheme.onSurfaceVariant,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            const Icon(Icons.arrow_forward_ios_rounded,
+                                size: 18, color: Colors.grey),
+                          ],
+                        ),
+                      ),
+                    ),
+                  );
                 },
               );
             },
@@ -228,6 +232,16 @@ class _LawyerHomePageState extends State<LawyerHomePage> {
         centerTitle: true,
         actions: [
           IconButton(
+            icon: Icon(Icons.chat_bubble_outline,
+                color: theme.colorScheme.onPrimary),
+            onPressed: () {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Chatbot feature coming soon!')),
+              );
+            },
+            tooltip: 'Chatbot',
+          ),
+          IconButton(
             icon:
                 Icon(Icons.person_outline, color: theme.colorScheme.onPrimary),
             onPressed: _openProfile,
@@ -252,7 +266,8 @@ class _LawyerHomePageState extends State<LawyerHomePage> {
           onDestinationSelected: _onTabTapped,
           destinations: const [
             NavigationDestination(icon: Icon(Icons.home), label: 'Home'),
-            NavigationDestination(icon: Icon(Icons.check), label: 'Accepted Bids'),
+            NavigationDestination(
+                icon: Icon(Icons.check), label: 'Accepted Bids'),
           ],
         ),
       ),
