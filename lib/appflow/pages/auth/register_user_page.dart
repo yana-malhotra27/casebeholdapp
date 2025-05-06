@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:casebehold/appflow/widgets/captcha_dialog.dart';
 
 class RegisterUserPage extends StatefulWidget {
   const RegisterUserPage({super.key});
@@ -22,6 +23,19 @@ class _RegisterUserPageState extends State<RegisterUserPage> {
   Future<void> _registerUser() async {
     if (!_formKey.currentState!.validate()) return;
 
+    // Show CAPTCHA dialog before proceeding
+    bool captchaPassed = await showDialog<bool>(
+          context: context,
+          barrierDismissible: false,
+          builder: (_) => const CaptchaDialog(),
+        ) ??
+        false;
+
+    if (!captchaPassed) {
+      // User closed dialog or didn't pass CAPTCHA
+      return;
+    }
+
     setState(() {
       _isLoading = true;
       _error = null;
@@ -35,36 +49,19 @@ class _RegisterUserPageState extends State<RegisterUserPage> {
         password: _passwordController.text.trim(),
       );
 
-      debugPrint("User  created with UID: ${userCredential.user!.uid}");
-
-      // Store extra user info in Firestore with explicit error handling
-      try {
-        print("Firebase Auth user created");
-        print("Writing to Firestore...");
-
-        await FirebaseFirestore.instance
-            .collection('users')
-            .doc(userCredential.user!.uid)
-            .set({
-          'name': _nameController.text.trim(),
-          'email': _emailController.text.trim(),
-          'role': 'user',
-          'caseInterest': _caseInterestController.text.trim(),
-          'createdAt': FieldValue.serverTimestamp(),
-        });
-
-        debugPrint("User  document created successfully in Firestore.");
-      } catch (firestoreError) {
-        debugPrint("Failed to create Firestore user document: $firestoreError");
-        setState(() {
-          _error = "Failed to save user data. Please try again.";
-          _isLoading = false;
-        });
-        return; // stop further execution so no navigation happens
-      }
+      // Store extra user info in Firestore
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(userCredential.user!.uid)
+          .set({
+        'name': _nameController.text.trim(),
+        'email': _emailController.text.trim(),
+        'role': 'user',
+        'caseInterest': _caseInterestController.text.trim(),
+        'createdAt': FieldValue.serverTimestamp(),
+      });
 
       if (mounted) {
-        // Navigate to user home using named route
         Navigator.pushNamedAndRemoveUntil(
           context,
           '/user-home',
@@ -72,10 +69,8 @@ class _RegisterUserPageState extends State<RegisterUserPage> {
         );
       }
     } on FirebaseAuthException catch (e) {
-      debugPrint("FirebaseAuthException: ${e.message}");
       setState(() => _error = e.message);
     } catch (e) {
-      debugPrint("General Exception: $e");
       setState(() => _error = "Something went wrong. Try again.");
     } finally {
       if (mounted) {
@@ -153,3 +148,4 @@ class _RegisterUserPageState extends State<RegisterUserPage> {
     );
   }
 }
+

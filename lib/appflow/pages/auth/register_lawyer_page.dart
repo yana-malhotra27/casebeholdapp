@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:casebehold/appflow/widgets/captcha_dialog.dart'; // Import the CAPTCHA dialog
 
 class RegisterLawyerPage extends StatefulWidget {
   const RegisterLawyerPage({super.key});
@@ -21,6 +22,19 @@ class _RegisterLawyerPageState extends State<RegisterLawyerPage> {
 
   Future<void> _registerLawyer() async {
     if (!_formKey.currentState!.validate()) return;
+
+    // Show CAPTCHA dialog before proceeding
+    bool captchaPassed = await showDialog<bool>(
+          context: context,
+          barrierDismissible: false,
+          builder: (_) => const CaptchaDialog(),
+        ) ??
+        false;
+
+    if (!captchaPassed) {
+      // User closed dialog or didn't pass CAPTCHA
+      return;
+    }
 
     setState(() {
       _isLoading = true;

@@ -54,8 +54,8 @@ class CaseDetailsPage extends StatelessWidget {
                       context,
                       MaterialPageRoute(
                         builder: (_) => BidsStatusPage(
-                          caseType: caseData['category'], // Pass category as caseType
-                          userId: userId, // Pass userId
+                          // caseType: caseData['category'], // Pass category as caseType
+                          // userId: userId, // Pass userId
                         ),
                       ),
                     );

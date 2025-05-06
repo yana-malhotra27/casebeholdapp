@@ -2,14 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class BidsStatusPage extends StatelessWidget {
-  final String caseType;
-  final String userId;
-
-  const BidsStatusPage({
-    super.key,
-    required this.caseType,
-    required this.userId,
-  });
+  const BidsStatusPage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -17,14 +10,14 @@ class BidsStatusPage extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Bids Status'),
+        title: const Text('All Bids'),
         backgroundColor: theme.colorScheme.primary,
         foregroundColor: theme.colorScheme.onPrimary,
       ),
       body: StreamBuilder<QuerySnapshot>(
         stream: FirebaseFirestore.instance
             .collection('bids')
-            .where('caseType', isEqualTo: caseType)
+            .orderBy('createdAt', descending: true)
             .snapshots(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
@@ -34,7 +27,7 @@ class BidsStatusPage extends StatelessWidget {
           if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
             return Center(
               child: Text(
-                'No bids found for case type: $caseType',
+                'No bids available.',
                 style: theme.textTheme.bodyLarge,
               ),
             );
@@ -61,22 +54,34 @@ class BidsStatusPage extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        bid['lawyerName'] ?? 'Unnamed Lawyer',
-                        style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+                        bid['name'] ?? 'Unnamed',
+                        style: theme.textTheme.titleMedium?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                       const SizedBox(height: 8),
                       Text(
-                        'Bid Amount: ₹${bid['amount'] ?? 'N/A'}',
+                        'Amount: ₹${bid['amount'] ?? 'N/A'}',
                         style: theme.textTheme.bodyMedium,
                       ),
                       const SizedBox(height: 6),
                       Text(
-                        'Message: ${bid['message'] ?? 'No message provided'}',
+                        'Message: ${bid['message'] ?? 'No message'}',
+                        style: theme.textTheme.bodySmall,
+                      ),
+                      const SizedBox(height: 6),
+                      // Text(
+                      //   'Case ID: ${bid['caseId'] ?? 'Unknown'}',
+                      //   style: theme.textTheme.bodySmall?.copyWith(color: Colors.grey),
+                      // ),
+                      //const SizedBox(height: 6),
+                      Text(
+                        'Type: ${bid['type'] ?? 'N/A'}',
                         style: theme.textTheme.bodySmall,
                       ),
                       const SizedBox(height: 6),
                       Text(
-                        'Status: ${bid['status'] ?? 'Pending'}',
+                        'Platform: ${bid['platformName'] ?? 'N/A'}',
                         style: theme.textTheme.bodySmall,
                       ),
                     ],
@@ -90,4 +95,3 @@ class BidsStatusPage extends StatelessWidget {
     );
   }
 }
-
